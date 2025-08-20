@@ -35,7 +35,7 @@ const LOAD_PROFILE = __ENV.LOAD_PROFILE || 'medium';
 const BASE_URL = __ENV.BASE_URL || resolvedConfig.baseUrl;
 
 export let options = {
-  stages: resolvedConfig.loadProfile[LOAD_PROFILE],
+  stages: resolvedConfig.loadProfile[LOAD_PROFILE].stages,
   thresholds: {
     ...resolvedConfig.thresholds,
     'btr_response_time': ['p(95)<1000'], // BTR API should respond within 1 second for 95% of requests
@@ -220,7 +220,7 @@ export function setup() {
   console.log(`   • History: ${resolvedConfig.endpoints.btrApprovalHistory}`);
   console.log('');
   console.log(`👥 Load Stages:`);
-  resolvedConfig.loadProfile[LOAD_PROFILE].forEach((stage, index) => {
+  resolvedConfig.loadProfile[LOAD_PROFILE].stages.forEach((stage, index) => {
     console.log(`   Stage ${index + 1}: ${stage.duration} with ${stage.target} users`);
   });
   console.log('');

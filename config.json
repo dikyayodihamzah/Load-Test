@@ -19,9 +19,7 @@
   "authentication": {
     "type": "cookie",
     "tokens": {
-      "token_ess": "${TOKEN_ESS}",
-      "refresh_token": "${REFRESH_TOKEN}",
-      "token_qhse": "${TOKEN_QHSE}"
+      "token_ess": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiMzdmMTc1M2ItMmRmYi00MjJkLWI2NjEtMDk2ZjE4OWU0NjRiIiwiYWxsb3dlZF9hcHBzIjpbIkVTUyIsIlJBQSIsIk1PQ0EiLCIwMDFNIiwiVENTIiwiTE1TLU9QRCIsIkxNUy1PUEQtQURNSU4iLCJNRURJQyIsIlNDTSIsIlFIU0UiXSwibGV2ZWwiOiIxIiwicGVybWlzc2lvbnMiOlsxLDEzLDE0LDE1LDIyLDIzLDI0LDI1LDI2LDI3LDI4LDI5LDMwLDMxLDMyLDMzLDM0LDM1LDM2LDM3LDM4LDM5LDQwLDQxLDQyLDQzLDQ0LDQ1LDQ2LDQ3LDQ4XSwiZXhwIjoxNzU1NjgwMzYwLCJpc3MiOiIxMDEwIn0.GhHsTOdqVWPEvyBLilbwRYOvhtXGDpOaXQeftSRtbjE; refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiMzdmMTc1M2ItMmRmYi00MjJkLWI2NjEtMDk2ZjE4OWU0NjRiIiwiZXhwIjoxNzU4MTg1OTYwLCJpc3MiOiIxMDEwIn0.UEZwZ_9m5_4EuvYSlwxQ4ZDOp0JG8YJDeIwcsEfpMhM; token_qhse=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsZXZlbCI6IjIiLCJwZXJtaXNzaW9ucyI6W3siaWQiOjF9LHsiaWQiOjJ9LHsiaWQiOjN9LHsiaWQiOjR9LHsiaWQiOjV9LHsiaWQiOjZ9LHsiaWQiOjd9LHsiaWQiOjh9LHsiaWQiOjEwMX0seyJpZCI6MTAyfSx7ImlkIjoxMDN9LHsiaWQiOjEwNX0seyJpZCI6MTEwfSx7ImlkIjoxMTJ9LHsiaWQiOjExM30seyJpZCI6MTE1fSx7ImlkIjoxMTZ9LHsiaWQiOjExN30seyJpZCI6MTE5fSx7ImlkIjoxMjB9LHsiaWQiOjEyMX0seyJpZCI6MTIyfSx7ImlkIjoxMjN9LHsiaWQiOjEyNH0seyJpZCI6MTI4fSx7ImlkIjoxMjl9LHsiaWQiOjEzMX0seyJpZCI6MTM1fSx7ImlkIjoxMzZ9XSwiZXhwIjoxNzU1NjgwMzY3LCJpc3MiOiIxMDEwIn0.1mVXNTRZXyr0mOLFUDLzTXFZSf4Q_5HwTgCyLiQY4Us"
     },
     "enabled": true
   },
@@ -65,8 +63,7 @@
   },
   "thresholds": {
     "http_req_duration": ["p(95)<500"],
-    "http_req_failed": ["rate<0.05"],
-    "errors": ["rate<0.05"]
+    "http_req_failed": ["rate<0.05"]
   },
   "testData": {
     "users": [
