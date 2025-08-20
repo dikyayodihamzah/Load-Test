@@ -80,18 +80,26 @@ The default configuration is set for BTR Approval API. To customize for other AP
 
 ### 3. Run Load Tests
 
-```bash
-# Run the basic load test
-k6 run load-test.js
+**⚠️ Important**: k6 doesn't automatically load `.env` files. Use our wrapper scripts:
 
-# Run the BTR approval API load test (recommended for BTR API)
+```bash
+# Method 1: Using .env file (Recommended)
+./run-with-env.sh                              # Uses .env file
+./run-with-env.sh btr-approval-load-test.js heavy  # Custom load profile
+
+# Windows PowerShell:
+.\run-with-env.ps1
+.\run-with-env.ps1 -LoadProfile heavy
+
+# Method 2: Manual environment variables
+export TOKEN_ESS="your_token"
+export REFRESH_TOKEN="your_refresh_token"
+export BASE_URL="https://super-apps.madhani.id"
 k6 run btr-approval-load-test.js
 
-# Run the configurable load test
-k6 run configurable-load-test.js
+# Method 3: Inline with k6 command
+k6 run -e TOKEN_ESS="your_token" -e BASE_URL="https://super-apps.madhani.id" btr-approval-load-test.js
 ```
-
-**⚠️ Important**: Make sure your environment variables are set before running the tests!
 
 ### 4. Customize Load Profile
 

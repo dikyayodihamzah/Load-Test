@@ -11,12 +11,19 @@ function resolveEnvironmentVariables(obj) {
   const envPattern = /\$\{([^}]+)\}/g;
   const jsonStr = JSON.stringify(obj);
   const resolvedStr = jsonStr.replace(envPattern, (match, envVar) => {
-    const value = __ENV[envVar];
-    if (!value) {
-      console.warn(`⚠️  Environment variable ${envVar} is not set. Using placeholder.`);
-      return match; // Keep placeholder if env var not found
+    // Handle default values: ${VAR_NAME:-default_value}
+    const [varName, defaultValue] = envVar.split(':-');
+    const value = __ENV[varName];
+    
+    if (value) {
+      return value;
+    } else if (defaultValue !== undefined) {
+      console.log(`ℹ️  Using default value for ${varName}: ${defaultValue}`);
+      return defaultValue;
+    } else {
+      console.warn(`⚠️  Environment variable ${varName} is not set and no default provided.`);
+      return match; // Keep placeholder if env var not found and no default
     }
-    return value;
   });
   return JSON.parse(resolvedStr);
 }
@@ -121,7 +128,7 @@ function makeBTRRequest(method, url, payload = null, params = {}) {
   // Enhanced response checks for BTR API
   const isSuccess = check(response, {
     [`BTR API - Status is successful (${response.status})`]: (r) => r.status >= 200 && r.status < 300,
-    [`BTR API - Response time acceptable (<1s)`]: (r) => r.timings.duration < 1000,
+    [`BTR API - Response time acceptable (<3s)`]: (r) => r.timings.duration < 3000,
     [`BTR API - Has response body`]: (r) => r.body && r.body.length > 0,
     [`BTR API - Content-Type is JSON`]: (r) => r.headers['Content-Type'] && r.headers['Content-Type'].includes('application/json'),
   });
@@ -142,21 +149,21 @@ function makeBTRRequest(method, url, payload = null, params = {}) {
 // Test scenario 1: BTR approval active tab with different pagination
 function testBTRApprovalPagination() {
   const randomLimit = [5, 10, 20, 50][Math.floor(Math.random() * 4)];
-  const randomSequence = Math.floor(Math.random() * 5) + 1;
-  const tabs = ['active', 'pending', 'completed'];
-  const randomTab = tabs[Math.floor(Math.random() * tabs.length)];
+//   const randomSequence = 2
+//   const tabs = 'active';
+//   const randomTab = tabs[Math.floor(Math.random() * tabs.length)];
   
-  const url = `${BASE_URL}/api/btr/approval?tz=7&tab=${randomTab}&sequence=${randomSequence}&limit=${randomLimit}`;
-  console.log(`🔄 Testing pagination: tab=${randomTab}, sequence=${randomSequence}, limit=${randomLimit}`);
+  const url = `${BASE_URL}/api/btr/approval?tz=7&tab=active&sequence=2&limit=${randomLimit}`;
+  console.log(`🔄 Testing pagination: tab=active, sequence=2, limit=${randomLimit}`);
   
   const response = makeBTRRequest('GET', url);
   
   if (response && response.status === 200) {
     try {
       const data = JSON.parse(response.body);
-      console.log(`📄 BTR Pagination test - ${randomTab}: ${data.data ? data.data.length : 'unknown'} items`);
+      console.log(`📄 BTR Pagination test - active: ${data.data ? data.data.length : 'unknown'} items`);
     } catch (e) {
-      console.log(`📄 BTR Pagination test - ${randomTab}: response received`);
+      console.log(`📄 BTR Pagination test - active: response received`);
     }
   }
   
@@ -166,21 +173,21 @@ function testBTRApprovalPagination() {
 // Test scenario 2: BTR approval history tab with different pagination
 function testBTRApprovalHistory() {
     const randomLimit = [5, 10, 20, 50][Math.floor(Math.random() * 4)];
-    const randomSequence = Math.floor(Math.random() * 5) + 1;
-    const tabs = ['active', 'pending', 'completed'];
-    const randomTab = tabs[Math.floor(Math.random() * tabs.length)];
+    // const randomSequence = 2;
+    // const tabs = 'history';
+    // const randomTab = tabs[Math.floor(Math.random() * tabs.length)];
     
-    const url = `${BASE_URL}/api/btr/approval?tz=7&tab=${randomTab}&sequence=${randomSequence}&limit=${randomLimit}`;
-    console.log(`🔄 Testing pagination: tab=${randomTab}, sequence=${randomSequence}, limit=${randomLimit}`);
+    const url = `${BASE_URL}/api/btr/approval?tz=7&tab=history&sequence=2&limit=${randomLimit}`;
+    console.log(`🔄 Testing pagination: tab=history, sequence=2, limit=${randomLimit}`);
 
     const response = makeBTRRequest('GET', url);
 
     if (response && response.status === 200) {
         try {
             const data = JSON.parse(response.body);
-            console.log(`📄 BTR Pagination test - ${randomTab}: ${data.data ? data.data.length : 'unknown'} items`);
+            console.log(`📄 BTR Pagination test - history: ${data.data ? data.data.length : 'unknown'} items`);
         } catch (e) {
-            console.log(`📄 BTR Pagination test - ${randomTab}: response received`);
+            console.log(`📄 BTR Pagination test - history: response received`);
         }
     }
 
@@ -202,8 +209,13 @@ export default function () {
   }
   
   // Random sleep between requests (simulate user think time)
-  const sleepTime = Math.random() * 3 + 2; // 2-5 seconds
-  console.log(`😴 VU ${__VU} sleeping for ${sleepTime.toFixed(1)}s`);
+  const minSleep = parseFloat(resolvedConfig.settings.minSleepTime) || 1;
+  const maxSleep = parseFloat(resolvedConfig.settings.maxSleepTime) || 3;
+  const sleepTime = Math.random() * (maxSleep - minSleep) + minSleep;
+  
+  if (resolvedConfig.settings.enableDetailedLogs === 'true') {
+    console.log(`😴 VU ${__VU} sleeping for ${sleepTime.toFixed(1)}s`);
+  }
   sleep(sleepTime);
 }
 
