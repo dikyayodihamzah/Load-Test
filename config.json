@@ -19,8 +19,9 @@
   "authentication": {
     "type": "cookie",
     "tokens": {
-      "token_ess": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiMzdmMTc1M2ItMmRmYi00MjJkLWI2NjEtMDk2ZjE4OWU0NjRiIiwiYWxsb3dlZF9hcHBzIjpbIkVTUyIsIlJBQSIsIk1PQ0EiLCIwMDFNIiwiVENTIiwiTE1TLU9QRCIsIkxNUy1PUEQtQURNSU4iLCJNRURJQyIsIlNDTSIsIlFIU0UiXSwibGV2ZWwiOiIxIiwicGVybWlzc2lvbnMiOlsxLDEzLDE0LDE1LDIyLDIzLDI0LDI1LDI2LDI3LDI4LDI5LDMwLDMxLDMyLDMzLDM0LDM1LDM2LDM3LDM4LDM5LDQwLDQxLDQyLDQzLDQ0LDQ1LDQ2LDQ3LDQ4XSwiZXhwIjoxNzU1NjgwMzYwLCJpc3MiOiIxMDEwIn0.GhHsTOdqVWPEvyBLilbwRYOvhtXGDpOaXQeftSRtbjE",
-      "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiMzdmMTc1M2ItMmRmYi00MjJkLWI2NjEtMDk2ZjE4OWU0NjRiIiwiZXhwIjoxNzU4MTg1OTYwLCJpc3MiOiIxMDEwIn0.UEZwZ_9m5_4EuvYSlwxQ4ZDOp0JG8YJDeIwcsEfpMhM"
+      "token_ess": "${TOKEN_ESS}",
+      "refresh_token": "${REFRESH_TOKEN}",
+      "token_qhse": "${TOKEN_QHSE}"
     },
     "enabled": true
   },

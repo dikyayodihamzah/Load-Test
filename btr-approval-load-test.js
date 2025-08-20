@@ -3,7 +3,26 @@ import { check, sleep } from 'k6';
 import { Rate, Trend, Counter } from 'k6/metrics';
 
 // Load configuration from JSON file
-const config = JSON.parse(open('./config.json'));
+const configRaw = open('./config.json');
+const config = JSON.parse(configRaw);
+
+// Replace environment variable placeholders with actual values
+function resolveEnvironmentVariables(obj) {
+  const envPattern = /\$\{([^}]+)\}/g;
+  const jsonStr = JSON.stringify(obj);
+  const resolvedStr = jsonStr.replace(envPattern, (match, envVar) => {
+    const value = __ENV[envVar];
+    if (!value) {
+      console.warn(`⚠️  Environment variable ${envVar} is not set. Using placeholder.`);
+      return match; // Keep placeholder if env var not found
+    }
+    return value;
+  });
+  return JSON.parse(resolvedStr);
+}
+
+// Resolve environment variables in config
+const resolvedConfig = resolveEnvironmentVariables(config);
 
 // Custom metrics for BTR Approval API
 let errorRate = new Rate('btr_errors');
@@ -13,12 +32,12 @@ let approvalFetchCounter = new Counter('approval_fetches');
 
 // Load test configuration
 const LOAD_PROFILE = __ENV.LOAD_PROFILE || 'medium';
-const BASE_URL = __ENV.BASE_URL || config.baseUrl;
+const BASE_URL = __ENV.BASE_URL || resolvedConfig.baseUrl;
 
 export let options = {
-  stages: config.loadProfile[LOAD_PROFILE],
+  stages: resolvedConfig.loadProfile[LOAD_PROFILE],
   thresholds: {
-    ...config.thresholds,
+    ...resolvedConfig.thresholds,
     'btr_response_time': ['p(95)<1000'], // BTR API should respond within 1 second for 95% of requests
     'btr_errors': ['rate<0.02'],         // BTR API error rate should be less than 2%
   },
@@ -26,14 +45,19 @@ export let options = {
 
 // Helper function to build cookie string from tokens
 function buildCookieString() {
-  if (!config.authentication.enabled || config.authentication.type !== 'cookie') {
+  if (!resolvedConfig.authentication.enabled || resolvedConfig.authentication.type !== 'cookie') {
     return '';
   }
   
-  const tokens = config.authentication.tokens;
+  const tokens = resolvedConfig.authentication.tokens;
   const cookieParts = [];
   
   for (const [key, value] of Object.entries(tokens)) {
+    // Skip if value is still a placeholder (env var not set)
+    if (!value || value.startsWith('${')) {
+      console.warn(`⚠️  Token ${key} is not properly set from environment variable`);
+      continue;
+    }
     cookieParts.push(`${key}=${value}`);
   }
   
@@ -42,9 +66,9 @@ function buildCookieString() {
 
 // Helper function to build headers with cookies
 function buildHeaders() {
-  let headers = { ...config.headers };
+  let headers = { ...resolvedConfig.headers };
   
-  if (config.authentication.enabled && config.authentication.type === 'cookie') {
+  if (resolvedConfig.authentication.enabled && resolvedConfig.authentication.type === 'cookie') {
     headers['Cookie'] = buildCookieString();
   }
   
@@ -189,15 +213,14 @@ export function setup() {
   console.log('='.repeat(70));
   console.log(`📊 Target URL: ${BASE_URL}`);
   console.log(`🎯 Load Profile: ${LOAD_PROFILE}`);
-  console.log(`🔐 Authentication: Cookie-based (${config.authentication.enabled ? 'Enabled' : 'Disabled'})`);
+  console.log(`🔐 Authentication: Cookie-based (${resolvedConfig.authentication.enabled ? 'Enabled' : 'Disabled'})`);
   console.log('');
   console.log('📋 BTR Endpoints to test:');
-  console.log(`   • Active: ${config.endpoints.btrApprovalActive}`);
-  console.log(`   • Pending: ${config.endpoints.btrApprovalPending}`);
-  console.log(`   • Completed: ${config.endpoints.btrApprovalCompleted}`);
+  console.log(`   • Active: ${resolvedConfig.endpoints.btrApprovalActive}`);
+  console.log(`   • History: ${resolvedConfig.endpoints.btrApprovalHistory}`);
   console.log('');
   console.log(`👥 Load Stages:`);
-  config.loadProfile[LOAD_PROFILE].forEach((stage, index) => {
+  resolvedConfig.loadProfile[LOAD_PROFILE].forEach((stage, index) => {
     console.log(`   Stage ${index + 1}: ${stage.duration} with ${stage.target} users`);
   });
   console.log('');
@@ -209,7 +232,7 @@ export function setup() {
   
   // Test connectivity to BTR API
   console.log('🔍 Testing BTR API connectivity...');
-  const testUrl = `${BASE_URL}${config.endpoints.btrApprovalActive}`;
+  const testUrl = `${BASE_URL}${resolvedConfig.endpoints.btrApprovalActive}`;
   
   try {
     const testResponse = http.get(testUrl, { 
@@ -245,7 +268,7 @@ export function setup() {
     timestamp: new Date().toISOString(),
     loadProfile: LOAD_PROFILE,
     baseUrl: BASE_URL,
-    endpoints: config.endpoints
+    endpoints: resolvedConfig.endpoints
   };
 }
 
