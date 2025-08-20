@@ -29,33 +29,71 @@ A comprehensive load testing suite using [k6](https://k6.io/) for testing multip
 
 ## 🚀 Quick Start
 
-### 1. Configure Your Endpoints
+### 1. Set Up Environment Variables
 
-Edit `config.json` to match your API:
+**Important**: Never commit sensitive tokens to your repository!
+
+Copy the environment example file and add your tokens:
+
+```bash
+# Copy the example file
+cp env.example .env
+
+# Edit .env with your actual tokens
+TOKEN_ESS=your_actual_token_ess_here
+REFRESH_TOKEN=your_actual_refresh_token_here
+TOKEN_QHSE=your_actual_token_qhse_here
+```
+
+**Alternative**: Set environment variables directly:
+
+```bash
+# Linux/macOS
+export TOKEN_ESS="your_token_here"
+export REFRESH_TOKEN="your_refresh_token_here"
+export TOKEN_QHSE="your_qhse_token_here"
+
+# Windows CMD
+set TOKEN_ESS=your_token_here
+set REFRESH_TOKEN=your_refresh_token_here
+set TOKEN_QHSE=your_qhse_token_here
+
+# Windows PowerShell
+$env:TOKEN_ESS="your_token_here"
+$env:REFRESH_TOKEN="your_refresh_token_here"
+$env:TOKEN_QHSE="your_qhse_token_here"
+```
+
+### 2. Configure Your Endpoints (Optional)
+
+The default configuration is set for BTR Approval API. To customize for other APIs, edit `config.json`:
 
 ```json
 {
   "baseUrl": "https://your-api.example.com",
   "endpoints": {
     "getUsers": "/api/users",
-    "createUser": "/api/users",
-    "updateUser": "/api/users/{id}",
-    "deleteUser": "/api/users/{id}"
+    "createUser": "/api/users"
   }
 }
 ```
 
-### 2. Run Basic Load Test
+### 3. Run Load Tests
 
 ```bash
 # Run the basic load test
 k6 run load-test.js
 
+# Run the BTR approval API load test (recommended for BTR API)
+k6 run btr-approval-load-test.js
+
 # Run the configurable load test
 k6 run configurable-load-test.js
 ```
 
-### 3. Customize Load Profile
+**⚠️ Important**: Make sure your environment variables are set before running the tests!
+
+### 4. Customize Load Profile
 
 ```bash
 # Light load (5 users)
@@ -71,7 +109,7 @@ k6 run -e LOAD_PROFILE=heavy configurable-load-test.js
 k6 run -e LOAD_PROFILE=spike configurable-load-test.js
 ```
 
-### 4. Override Base URL
+### 5. Override Base URL
 
 ```bash
 # Test against different environment
@@ -89,24 +127,38 @@ k6 run -e BASE_URL=https://staging-api.example.com configurable-load-test.js
 | `heavy` | High load test | 50 | ~23 minutes |
 | `spike` | Sudden traffic burst | 100 | ~3.5 minutes |
 
-### Authentication
+### Authentication & Security
 
-Enable authentication in `config.json`:
+🔐 **Token Security**: Tokens are now managed via environment variables for security.
+
+Authentication is pre-configured for BTR API with cookie-based JWT tokens:
 
 ```json
 {
   "authentication": {
-    "type": "bearer",
-    "token": "your-jwt-token-here",
+    "type": "cookie",
+    "tokens": {
+      "token_ess": "${TOKEN_ESS}",
+      "refresh_token": "${REFRESH_TOKEN}",
+      "token_qhse": "${TOKEN_QHSE}"
+    },
     "enabled": true
   }
 }
 ```
 
-Supported authentication types:
-- `bearer` - Bearer token (JWT)
-- `api-key` - API key in headers
-- `basic` - Basic authentication
+**Security Best Practices**:
+- ✅ Never commit `.env` files or hardcoded tokens
+- ✅ Use environment variables for sensitive data
+- ✅ Rotate tokens regularly
+- ✅ Use different tokens for different environments
+- ✅ Add `.env` to your `.gitignore` (already included)
+
+**Getting Your Tokens**:
+1. Login to your BTR application
+2. Open browser developer tools (F12)
+3. Go to Application/Storage → Cookies
+4. Copy the values for `token_ess`, `refresh_token`, and `token_qhse`
 
 ### Test Scenarios
 

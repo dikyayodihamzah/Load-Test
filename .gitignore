@@ -1,1 +1,24 @@
-/configurable-load-test.js
+# Environment variables with sensitive tokens
+.env
+
+# k6 test results
+results.json
+results.csv
+*.log
+
+# Node modules (if using npm/yarn)
+node_modules/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
