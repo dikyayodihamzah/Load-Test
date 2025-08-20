@@ -1,0 +1,100 @@
+{
+  "baseUrl": "https://super-apps.madhani.id",
+  "endpoints": {
+    "btrApproval": "/api/btr/approval",
+    "btrApprovalActive": "/api/btr/approval?tz=7&tab=active&sequence=2&limit=10",
+    "btrApprovalHistory": "/api/btr/approval?tz=7&tab=history&sequence=2&limit=10"
+  },
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:141.0) Gecko/20100101 Firefox/141.0",
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Language": "en-US,en;q=0.5",
+    "Accept-Encoding": "gzip, deflate, br, zstd",
+    "Connection": "keep-alive",
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "same-origin",
+    "TE": "trailers"
+  },
+  "authentication": {
+    "type": "cookie",
+    "tokens": {
+      "token_ess": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiMzdmMTc1M2ItMmRmYi00MjJkLWI2NjEtMDk2ZjE4OWU0NjRiIiwiYWxsb3dlZF9hcHBzIjpbIkVTUyIsIlJBQSIsIk1PQ0EiLCIwMDFNIiwiVENTIiwiTE1TLU9QRCIsIkxNUy1PUEQtQURNSU4iLCJNRURJQyIsIlNDTSIsIlFIU0UiXSwibGV2ZWwiOiIxIiwicGVybWlzc2lvbnMiOlsxLDEzLDE0LDE1LDIyLDIzLDI0LDI1LDI2LDI3LDI4LDI5LDMwLDMxLDMyLDMzLDM0LDM1LDM2LDM3LDM4LDM5LDQwLDQxLDQyLDQzLDQ0LDQ1LDQ2LDQ3LDQ4XSwiZXhwIjoxNzU1NjgwMzYwLCJpc3MiOiIxMDEwIn0.GhHsTOdqVWPEvyBLilbwRYOvhtXGDpOaXQeftSRtbjE",
+      "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uX2lkIjoiMzdmMTc1M2ItMmRmYi00MjJkLWI2NjEtMDk2ZjE4OWU0NjRiIiwiZXhwIjoxNzU4MTg1OTYwLCJpc3MiOiIxMDEwIn0.UEZwZ_9m5_4EuvYSlwxQ4ZDOp0JG8YJDeIwcsEfpMhM"
+    },
+    "enabled": true
+  },
+  "loadProfile": {
+    "light": {
+      "stages": [
+        { "duration": "1m", "target": 5 },
+        { "duration": "2m", "target": 5 },
+        { "duration": "1m", "target": 0 }
+      ]
+    },
+    "medium": {
+      "stages": [
+        { "duration": "2m", "target": 10 },
+        { "duration": "5m", "target": 10 },
+        { "duration": "2m", "target": 20 },
+        { "duration": "5m", "target": 20 },
+        { "duration": "2m", "target": 0 }
+      ]
+    },
+    "heavy": {
+      "stages": [
+        { "duration": "2m", "target": 10 },
+        { "duration": "5m", "target": 10 },
+        { "duration": "2m", "target": 20 },
+        { "duration": "5m", "target": 20 },
+        { "duration": "2m", "target": 50 },
+        { "duration": "5m", "target": 50 },
+        { "duration": "2m", "target": 0 }
+      ]
+    },
+    "spike": {
+      "stages": [
+        { "duration": "30s", "target": 1 },
+        { "duration": "30s", "target": 100 },
+        { "duration": "1m", "target": 100 },
+        { "duration": "30s", "target": 1 },
+        { "duration": "30s", "target": 0 }
+      ]
+    }
+  },
+  "thresholds": {
+    "http_req_duration": ["p(95)<500"],
+    "http_req_failed": ["rate<0.05"],
+    "errors": ["rate<0.05"]
+  },
+  "testData": {
+    "users": [
+      { "name": "John Doe", "email": "john@example.com", "age": 30 },
+      { "name": "Jane Smith", "email": "jane@example.com", "age": 25 },
+      { "name": "Bob Johnson", "email": "bob@example.com", "age": 35 },
+      { "name": "Alice Brown", "email": "alice@example.com", "age": 28 },
+      { "name": "Charlie Wilson", "email": "charlie@example.com", "age": 32 }
+    ],
+    "products": [
+      { "name": "Laptop", "price": 999.99, "category": "Electronics" },
+      { "name": "Book", "price": 19.99, "category": "Books" },
+      { "name": "Headphones", "price": 199.99, "category": "Electronics" },
+      { "name": "Coffee Mug", "price": 12.99, "category": "Home" }
+    ]
+  },
+  "scenarios": {
+    "weights": {
+      "get_requests": 0.4,
+      "post_requests": 0.2,
+      "put_requests": 0.15,
+      "delete_requests": 0.1,
+      "user_workflow": 0.15
+    }
+  },
+  "settings": {
+    "minSleepTime": 1,
+    "maxSleepTime": 3,
+    "enableDetailedLogs": false,
+    "enableCustomMetrics": true
+  }
+}
